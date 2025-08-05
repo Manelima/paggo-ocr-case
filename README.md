@@ -52,7 +52,7 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/paggo-ocr-case.git](https://github.com/seu-usuario/paggo-ocr-case.git)
+    git clone [https://github.com/Manelima/paggo-ocr-case.git](https://github.com/Manelima/paggo-ocr-case.git)
     cd paggo-ocr-case
     ```
 

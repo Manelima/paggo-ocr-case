@@ -1,6 +1,30 @@
-# .gitignore
+# .gitignore (versão otimizada)
+
+# Dependências do Node
 node_modules/
+
+# Arquivos de Build
 .next/
 dist/
-.env
+
+# Logs
 *.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Arquivos de Ambiente (NÃO FAZER COMMIT!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Arquivo do Banco de Dados SQLite (NÃO FAZER COMMIT!)
+/apps/api/prisma/dev.db
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Pastas de IDEs (Ex: VSCode)
+.vscode/
