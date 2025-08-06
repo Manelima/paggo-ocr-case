@@ -34,7 +34,7 @@ Este projeto foi desenvolvido com as seguintes tecnologias:
 * **Banco de Dados:** PostgreSQL (via Prisma ORM)
 * **Autenticação:** NextAuth.js (com JWT)
 * **OCR:** Tesseract.js
-* **LLM:** OpenAI API (GPT-4)
+* **LLM:** Google Gemini API
 * **Deployment:** Vercel
 
 ---
@@ -61,7 +61,7 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
         ```bash
         cp .env.example .env
         ```
-    * Abra o arquivo `.env` e preencha todas as variáveis necessárias (URL do banco, segredos de JWT, chave da API da OpenAI, etc.).
+    * Abra o arquivo .env e preencha todas as variáveis necessárias (URL do banco, segredos de JWT, chave da API do Google Gemini, etc.).
 
 3.  **Instale as dependências:**
     ```bash
@@ -94,5 +94,6 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
 * **Monorepo com PNPM Workspaces:** Escolhi esta abordagem para facilitar o compartilhamento de tipos (especialmente os tipos gerados pelo Prisma) entre o frontend e o backend, garantindo consistência e evitando duplicação de código.
 * **Processamento Assíncrono de OCR:** A extração de texto é uma tarefa demorada. Para não bloquear a requisição do usuário, o processo é executado em background (ex: usando filas com BullMQ ou uma simples `Promise`), melhorando a experiência do usuário.
 * **Autenticação com NextAuth.js:** Optei por gerenciar a sessão no lado do cliente com NextAuth.js pela sua simplicidade de integração com o ecossistema Next.js, enquanto o backend NestJS apenas valida os tokens JWT, mantendo os serviços desacoplados.
+* **Escolha do LLM (Google Gemini):** Para a integração com o LLM, optei pela API do Google Gemini devido à sua alta qualidade e ao seu generoso nível de acesso gratuito, que se alinha perfeitamente aos requisitos de um protótipo funcional sem incorrer em custos de desenvolvimento.
 
 ---

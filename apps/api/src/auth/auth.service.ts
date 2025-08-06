@@ -12,7 +12,6 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
- // Dentro da classe AuthService em auth.service.ts
   async register(dto: AuthDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
