@@ -1,0 +1,160 @@
+/* apps/web/src/app/login/Login.module.css */
+.pageWrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: #111827; /* gray-900 */
+  background: linear-gradient(135deg, #0066CC 0%, #004499 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 28rem; /* 448px */
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  padding: 2rem;
+  border: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.logoIcon {
+  width: 3rem; height: 3rem;
+  background: #0066CC; /* paggo-blue */
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.5rem; /* Efeito do emoji */
+}
+
+.logoText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #4b5563; /* gray-600 */
+  font-size: 1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb; /* gray-200 */
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #ffffff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #0066CC; /* paggo-blue */
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.button {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: #0066CC;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button:hover:not(:disabled) {
+  background: #004499; /* paggo-dark */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.button:disabled {
+  background: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+}
+
+.loadingSpinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.footerText {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.link {
+  color: #0066CC;
+  text-decoration: none;
+  font-weight: 600;
+}
+.link:hover {
+  text-decoration: underline;
+}

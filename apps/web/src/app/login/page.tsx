@@ -4,16 +4,19 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'; 
+import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
+import styles from './Login.module.css'; // Importa nosso novo CSS!
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     const loadingToast = toast.loading('Entrando...');
 
     const result = await signIn('credentials', {
@@ -30,59 +33,60 @@ export default function LoginPage() {
     } else {
       toast.error('Credenciais inválidas. Tente novamente.');
     }
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
-      <Toaster />
-      <div className="max-w-md w-full bg-white dark:bg-slate-800 shadow-md rounded-lg p-8">
-        <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-6">
-          Bem-vindo de Volta!
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
+    <div className={styles.pageWrapper}>
+      <Toaster position='top-center' />
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.logo}>
+              <div className={styles.logoIcon}>📄</div>
+              <span className={styles.logoText}>Paggo OCR</span>
+            </div>
+            <h1 className={styles.title}>Bem-vindo de Volta!</h1>
+            <p className={styles.subtitle}>Acesse sua conta para continuar</p>
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Senha
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-          >
-            Entrar
-          </button>
-        </form>
-        <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-4">
-          Não tem uma conta?{' '}
-          <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-            Registre-se
-          </Link>
-        </p>
+
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>Email</label>
+              <input
+                id="email"
+                type="email"
+                className={styles.input}
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="password" className={styles.label}>Senha</label>
+              <input
+                id="password"
+                type="password"
+                className={styles.input}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit" className={styles.button} disabled={isLoading}>
+              {isLoading ? <div className={styles.loadingSpinner} /> : <span>Entrar</span>}
+            </button>
+          </form>
+
+          <p className={styles.footerText}>
+            Não tem uma conta?{' '}
+            <Link href="/register" className={styles.link}>Registre-se</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

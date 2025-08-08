@@ -1,0 +1,17 @@
+
+/* apps/web/src/components/ui/Card.module.css */
+.card {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--gray-200);
+}
+
+.cardHover {
+  transition: var(--transition-all);
+}
+
+.cardHover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}

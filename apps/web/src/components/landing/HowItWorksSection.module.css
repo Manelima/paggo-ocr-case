@@ -1,0 +1,140 @@
+/* apps/web/src/components/landing/HowItWorksSection.module.css */
+.section {
+  padding: 5rem 0;
+  background: var(--gray-50);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 2.25rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.stepsContainer {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.stepsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.stepNumber {
+  width: 2rem;
+  height: 2rem;
+  background: var(--paggo-blue);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 0.5rem;
+}
+
+.codeBlock {
+  background: var(--gray-900);
+  color: #4ade80; /* green-400 */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-family: 'Courier New', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+.codeBlock::-webkit-scrollbar {
+  height: 6px;
+}
+
+.codeBlock::-webkit-scrollbar-track {
+  background: var(--gray-800);
+  border-radius: 3px;
+}
+
+.codeBlock::-webkit-scrollbar-thumb {
+  background: var(--gray-600);
+  border-radius: 3px;
+}
+
+.codeBlock::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+.commandLine {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.commandLine:last-child {
+  margin-bottom: 0;
+}
+
+/* Efeito de hover no step */
+.step:hover .stepNumber {
+  background: var(--paggo-dark);
+  transform: scale(1.05);
+  transition: var(--transition-all);
+}
+
+.step:hover .codeBlock {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: var(--transition-all);
+}

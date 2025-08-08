@@ -8,7 +8,8 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  Body,  
+  Body,
+  Get,  
   Param,  
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -57,4 +58,9 @@ export class DocumentsController {
       queryDto.prompt,
     );
   }
+
+  @Get(':id')
+getDocumentById(@Param('id') documentId: string, @Req() req: { user: User }) {
+  return this.documentsService.getDocumentById(documentId, req.user);
+}
 }

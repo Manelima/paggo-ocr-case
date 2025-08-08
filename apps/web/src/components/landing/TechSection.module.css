@@ -1,0 +1,142 @@
+/* apps/web/src/components/landing/TechSection.module.css */
+.section {
+  padding: 5rem 0;
+  background: var(--gray-50);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 2.25rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .techGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .techGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.techCard {
+  text-align: center;
+}
+
+.iconContainer {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: var(--white);
+  font-size: 1.25rem;
+  transition: var(--transition-all);
+}
+
+.techCard:hover .iconContainer {
+  transform: scale(1.1);
+}
+
+/* Cores específicas para cada tecnologia */
+.black {
+  background: #000000;
+}
+
+.blueLight {
+  background: #3b82f6; /* blue-500 */
+}
+
+.cyan {
+  background: #06b6d4; /* cyan-500 */
+}
+
+.red {
+  background: #dc2626; /* red-600 */
+}
+
+.blue {
+  background: #2563eb; /* blue-600 */
+}
+
+.blueDark {
+  background: #1d4ed8; /* blue-700 */
+}
+
+.gray {
+  background: #1f2937; /* gray-800 */
+}
+
+.purple {
+  background: #9333ea; /* purple-600 */
+}
+
+.green {
+  background: #16a34a; /* green-600 */
+}
+
+.yellow {
+  background: #eab308; /* yellow-500 */
+}
+
+.blueVeryLight {
+  background: #60a5fa; /* blue-400 */
+}
+
+.techName {
+  font-weight: 600;
+  color: var(--gray-900);
+  margin-bottom: 0.25rem;
+}
+
+.techCategory {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}

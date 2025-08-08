@@ -1,0 +1,23 @@
+/* apps/web/src/components/ui/Badge.module.css */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.default {
+  background: var(--gray-100);
+  color: var(--gray-800);
+}
+
+.success {
+  background: var(--status-badge);
+  color: var(--white);
+}
+
+.warning {
+  background: var(--yellow-400);
+  color: var(--yellow-900);
+}

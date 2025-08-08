@@ -1,88 +1,72 @@
 // apps/web/src/app/dashboard/components/UploadForm.tsx
 'use client';
+import { useState, useRef } from 'react';
+import styles from './UploadForm.module.css';
+import { FileUp, File as FileIcon, Trash2, LoaderCircle } from 'lucide-react';
 
-import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import toast, { Toaster } from 'react-hot-toast';
-
-export default function UploadForm() {
-  const { data: session } = useSession();
-  const router = useRouter();
+export default function UploadForm({ onUpload, isProcessing }: { onUpload: (file: File) => void, isProcessing: boolean }) {
   const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      toast.error('Por favor, selecione um arquivo.');
-      return;
-    }
-
-    setIsUploading(true);
-    const loadingToast = toast.loading('Enviando arquivo...');
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const accessToken = (session as any)?.accessToken;
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/documents/upload`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      console.log('Resposta da API de upload:', res.data);
-      const { documentId } = res.data;
-      console.log('Redirecionando para a URL:', `/documents/${documentId}`);
-
-      toast.dismiss(loadingToast);
-      toast.success('Upload concluído! Processando documento...');
-      
-      router.push(`/documents/${documentId}`);
-
-    } catch (error) {
-      setIsUploading(false);
-      toast.dismiss(loadingToast);
-      toast.error('Falha no upload. Tente novamente.');
-      console.error(error);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+        // Validações de arquivo podem ser adicionadas aqui
+        setFile(selectedFile);
     }
   };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const selectedFile = e.dataTransfer.files?.[0];
+    if (selectedFile) {
+        setFile(selectedFile);
+    }
+  };
+
+  const removeFile = () => { setFile(null); if (inputRef.current) inputRef.current.value = ""; };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (file) onUpload(file); };
+  const formatFileSize = (bytes: number) => { if (bytes === 0) return '0 Bytes'; const k = 1024; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + ['Bytes', 'KB', 'MB', 'GB'][i]; };
+  const handleDrag = (e: React.DragEvent) => { e.preventDefault(); e.stopPropagation(); if (e.type === "dragenter" || e.type === "dragover") setDragActive(true); else if (e.type === "dragleave") setDragActive(false); };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Toaster />
-      <input
-        type="file"
-        onChange={handleFileChange}
-        accept=".pdf,.png,.jpg,.jpeg"
-        className="block w-full text-sm text-slate-500
-          file:mr-4 file:py-2 file:px-4
-          file:rounded-full file:border-0
-          file:text-sm file:font-semibold
-          file:bg-blue-50 file:text-blue-700
-          hover:file:bg-blue-100"
-      />
-      <button
-        type="submit"
-        disabled={isUploading}
-        className="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
-      >
-        {isUploading ? 'Enviando...' : 'Enviar e Processar'}
-      </button>
-    </form>
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
+        <h2 className={styles.cardTitle}><FileUp size={20} /> Upload de Documento</h2>
+      </div>
+      <div className={styles.cardContent}>
+        <form onSubmit={handleSubmit}>
+          <div 
+            className={`${styles.uploadArea} ${dragActive ? styles.dragover : ''}`}
+            onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}
+            onClick={() => inputRef.current?.click()}
+          >
+            <div className={styles.uploadIcon} >📁</div>
+            <p className={styles.uploadText}>Arraste e solte seu arquivo aqui</p>
+            <p className={styles.uploadSubtext}>ou clique para selecionar (PDF, JPG, PNG)</p>
+            <input type="file" ref={inputRef} className={styles.fileInput} onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png"/>
+          </div>
+
+          {file && (
+            <div className={styles.selectedFile}>
+              <div className={styles.fileIcon}>📄</div>
+              <div className={styles.fileInfo}>
+                <p className={styles.fileName}>{file.name}</p>
+                <p className={styles.fileSize}>{formatFileSize(file.size)}</p>
+              </div>
+              <button type="button" className={styles.removeFile} onClick={removeFile}><Trash2 size={16}/></button>
+            </div>
+          )}
+
+          <button type="submit" className={`${styles.btn} ${styles.btnPrimary} ${styles.btnFull}`} disabled={!file || isProcessing}>
+            {isProcessing ? <><div className={styles.spinner} /><span>Processando...</span></> : <span>Processar Documento</span>}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

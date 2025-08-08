@@ -1,0 +1,186 @@
+/* apps/web/src/app/dashboard/components/UploadForm.module.css */
+
+/* Estrutura do Card */
+.card {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.cardTitle {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Área de Upload (Arrastar e Soltar) */
+.uploadArea {
+  border: 2px dashed #d1d5db; /* gray-300 */
+  border-radius: 0.75rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.uploadArea:hover,
+.dragover {
+  border-color: #0066CC; /* paggo-blue */
+  background: #E6F3FF; /* paggo-light */
+}
+
+.uploadIcon {
+  color: #9ca3af; /* gray-400 */
+  margin-bottom: 1rem;
+}
+
+.uploadText {
+  font-weight: 600;
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.25rem;
+}
+
+.uploadSubtext {
+  color: #6b7280; /* gray-500 */
+  font-size: 0.875rem;
+}
+
+.fileInput {
+  display: none; /* Oculta o input real, pois usamos o label */
+}
+
+/* Exibição do Arquivo Selecionado */
+.selectedFile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f9fafb; /* gray-50 */
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.fileIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #0066CC;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.fileInfo {
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden; /* Garante que o texto não quebre o layout */
+}
+
+.fileName {
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.removeFile {
+  padding: 0.5rem;
+  background: #fde2e2;
+  color: #ef4444; /* error */
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.removeFile:hover {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+/* Botão Principal */
+.btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btnPrimary {
+  background-color: #0066CC; /* paggo-blue */
+  color: white;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background-color: #004499; /* paggo-dark */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.btn:disabled {
+  background-color: #d1d5db; /* gray-300 */
+  color: #6b7280;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,58 @@
+/* apps/web/src/components/ui/Button.module.css */
+.baseButton {
+  font-weight: 600;
+  transition: var(--transition-all);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--white);
+  color: var(--paggo-blue);
+  box-shadow: var(--shadow-lg);
+}
+
+.primary:hover {
+  background: var(--gray-100);
+}
+
+.secondary {
+  border: 2px solid var(--white);
+  background: transparent;
+  color: var(--white);
+}
+
+.secondary:hover {
+  background: var(--white);
+  color: var(--paggo-blue);
+}
+
+.outline {
+  border: 1px solid var(--gray-300);
+  background: transparent;
+  color: var(--gray-700);
+}
+
+.outline:hover {
+  background: var(--gray-50);
+}
+
+.sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.md {
+  padding: 2rem 2rem;
+}
+
+.lg {
+  padding: 1.25rem 2.5rem;
+  font-size: 1.125rem;
+}

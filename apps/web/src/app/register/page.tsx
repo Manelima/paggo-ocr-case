@@ -6,14 +6,17 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import styles from './Register.module.css'; // Importa nosso novo CSS!
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true); // Inicia o estado de loading
     const loadingToast = toast.loading('Criando sua conta...');
 
     try {
@@ -23,70 +26,76 @@ export default function RegisterPage() {
       );
 
       toast.dismiss(loadingToast);
-      toast.success('Conta criada com sucesso! Redirecionando para o login...');
+      toast.success('Conta criada com sucesso! Redirecionando...');
 
       setTimeout(() => {
         router.push('/login');
       }, 2000);
 
-    } catch (error) {
+    } catch (error: any) {
       toast.dismiss(loadingToast);
-      toast.error('Falha ao criar conta. Verifique os dados ou tente outro e-mail.');
+      const errorMessage = 
+        error.response?.data?.message || 
+        'Falha ao criar conta. Tente novamente.';
+      toast.error(errorMessage);
       console.error(error);
+    } finally {
+      setIsLoading(false); // Finaliza o estado de loading
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
+    <div className={styles.pageWrapper}>
       <Toaster />
-      <div className="max-w-md w-full bg-white dark:bg-slate-800 shadow-md rounded-lg p-8">
-        <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-6">
-          Crie sua Conta
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <div className={styles.logo}>
+              <div className={styles.logoIcon}>📄</div>
+              <span className={styles.logoText}>Paggo OCR</span>
+            </div>
+            <h1 className={styles.title}>Criar Conta</h1>
+            <p className={styles.subtitle}>Comece a transformar seus documentos em dados inteligentes</p>
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Senha
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Mínimo 6 caracteres"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1 block w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md text-sm shadow-sm placeholder-slate-400
-                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-          >
-            Registrar
-          </button>
-        </form>
-        <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-4">
-          Já tem uma conta?{' '}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Faça login
-          </Link>
-        </p>
+
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.formGroup}>
+              <label htmlFor="email" className={styles.label}>Email</label>
+              <input
+                id="email"
+                type="email"
+                className={styles.input}
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="password" className={styles.label}>Senha</label>
+              <input
+                id="password"
+                type="password"
+                className={styles.input}
+                placeholder="Mínimo 6 caracteres"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+
+            <button type="submit" className={styles.button} disabled={isLoading}>
+              {isLoading ? <div className={styles.loadingSpinner} /> : <span>Criar Conta</span>}
+            </button>
+          </form>
+
+          <p className={styles.footerText}>
+            Já tem uma conta?{' '}
+            <Link href="/login" className={styles.link}>Faça login</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

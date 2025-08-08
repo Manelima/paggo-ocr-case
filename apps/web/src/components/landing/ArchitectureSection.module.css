@@ -1,0 +1,171 @@
+/* apps/web/src/components/landing/ArchitectureSection.module.css */
+.section {
+  padding: 5rem 0;
+  background: var(--white);
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 2.25rem;
+  }
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.decisionsGrid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .decisionsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.decisionCard {
+  padding: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid;
+  transition: var(--transition-all);
+}
+
+.decisionCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Card variants with gradients */
+.blueCard {
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+  border-color: #bfdbfe;
+}
+
+.greenCard {
+  background: linear-gradient(to bottom right, #f0fdf4, #d1fae5);
+  border-color: #bbf7d0;
+}
+
+.purpleCard {
+  background: linear-gradient(to bottom right, #faf5ff, #e7e5ff);
+  border-color: #d8b4fe;
+}
+
+.yellowCard {
+  background: linear-gradient(to bottom right, #fffbeb, #fef3c7);
+  border-color: #fde68a;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.iconContainer {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.iconContainer svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--white);
+}
+
+/* Icon background colors */
+.blueIcon {
+  background: #2563eb;
+}
+
+.greenIcon {
+  background: #16a34a;
+}
+
+.purpleIcon {
+  background: #9333ea;
+}
+
+.yellowIcon {
+  background: #ca8a04;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.cardDescription {
+  color: var(--gray-700);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.benefitContainer {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.benefitContainer svg {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+.blueBenefit {
+  color: #1d4ed8;
+}
+
+.greenBenefit {
+  color: #15803d;
+}
+
+.purpleBenefit {
+  color: #7c3aed;
+}
+
+.yellowBenefit {
+  color: #a16207;
+}

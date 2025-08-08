@@ -15,15 +15,22 @@ export class AuthService {
   async register(dto: AuthDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashedPassword,
-      },
-    });
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          password: hashedPassword,
+        },
+      });
 
-    const { password, ...result } = user;
-    return result;
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+        if (error.code === 'P2002') {
+        throw new ForbiddenException('Um usuário com essas credenciais já existe.');
+    }
+    throw error;
+    }
   }
 
   async login(dto: AuthDto) {
@@ -32,13 +39,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new ForbiddenException('Credentials incorrect');
+      throw new ForbiddenException('Credenciais incorretas.');
     }
 
     const pwMatches = await bcrypt.compare(dto.password, user.password);
 
     if (!pwMatches) {
-      throw new ForbiddenException('Credentials incorrect');
+      throw new ForbiddenException('Credenciais incorretas.');
     }
 
     const payload = { sub: user.id, email: user.email };

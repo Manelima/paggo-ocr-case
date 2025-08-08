@@ -5,26 +5,26 @@ import { User } from '@prisma/client';
 import { createWorker } from 'tesseract.js';
 import pdf from 'pdf-parse';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenerativeAI } from '@google/generative-ai'; 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 @Injectable()
 export class DocumentsService {
   private readonly logger = new Logger(DocumentsService.name);
-  private genAI: GoogleGenerativeAI; 
+  private genAI: GoogleGenerativeAI;
 
   constructor(
-  private prisma: PrismaService,
-  private config: ConfigService,
-) {
-  const apiKey = this.config.get('GOOGLE_API_KEY');
-  if (!apiKey) {
-    throw new Error('GOOGLE_API_KEY não está definida no arquivo .env');
+    private prisma: PrismaService,
+    private config: ConfigService,
+  ) {
+    const apiKey = this.config.get('GOOGLE_API_KEY');
+    if (!apiKey) {
+      throw new Error('GOOGLE_API_KEY não está definida no arquivo .env');
+    }
+    this.genAI = new GoogleGenerativeAI(apiKey);
   }
-  this.genAI = new GoogleGenerativeAI(apiKey);
-}
 
   // ===================================
-  // == MÉTODO DE UPLOAD E OCR (INTACTO) ==
+  // == MÉTODO DE UPLOAD E OCR ==
   // ===================================
   async handleUpload(file: Express.Multer.File, user: User) {
     this.logger.log(`Recebido ${file.mimetype} ${file.originalname} do usuário ${user.email}`);
@@ -82,39 +82,53 @@ export class DocumentsService {
     }
   }
 
-  // ======================================================
-  // == MÉTODO DE INTERAÇÃO COM LLM (AGORA COM GEMINI) ==
-  // ======================================================
- async queryDocument(documentId: string, user: User, prompt: string) {
-  const document = await this.prisma.document.findUnique({
-    where: { id: documentId },
-  });
+  // ===================================
+  // == MÉTODO PARA BUSCAR DOCUMENTO ==
+  // ===================================
+  async getDocumentById(documentId: string, user: User) {
+    const document = await this.prisma.document.findUnique({
+      where: { id: documentId },
+    });
 
-  if (!document) throw new NotFoundException('Documento não encontrado.');
-  if (document.userId !== user.id) throw new ForbiddenException('Acesso negado a este documento.');
-  if (document.status !== 'COMPLETED' || !document.extractedText) {
-    throw new NotFoundException('O texto do documento ainda não foi extraído ou o processamento falhou.');
+    if (!document) throw new NotFoundException('Documento não encontrado.');
+    if (document.userId !== user.id) throw new ForbiddenException('Acesso negado a este documento.');
+
+    return document;
   }
 
-  this.logger.log(`Iniciando chamada LLM (Gemini) para o documento ${documentId}...`);
+  // ======================================================
+  // == MÉTODO DE INTERAÇÃO COM LLM (COM GEMINI) ==
+  // ======================================================
+  async queryDocument(documentId: string, user: User, prompt: string) {
+    const document = await this.prisma.document.findUnique({
+      where: { id: documentId },
+    });
 
-  const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
-  
-  const fullPrompt = `Com base no seguinte texto de um documento, responda à pergunta do usuário.\n\n--- TEXTO DO DOCUMENTO ---\n${document.extractedText}\n--------------------------\n\n--- PERGUNTA DO USUÁRIO ---\n${prompt}\n---------------------------`;
+    if (!document) throw new NotFoundException('Documento não encontrado.');
+    if (document.userId !== user.id) throw new ForbiddenException('Acesso negado a este documento.');
+    if (document.status !== 'COMPLETED' || !document.extractedText) {
+      throw new NotFoundException('O texto do documento ainda não foi extraído ou o processamento falhou.');
+    }
 
-  const result = await model.generateContent(fullPrompt);
-  const response = result.response;
-  const llmAnswer = response.text();
+    this.logger.log(`Iniciando chamada LLM (Gemini) para o documento ${documentId}...`);
 
-  await this.prisma.document.update({
-    where: { id: documentId },
-    data: {
-      llmInteractions: {
-        push: { prompt, answer: llmAnswer, timestamp: new Date() },
+    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    
+    const fullPrompt = `Com base no seguinte texto de um documento, responda à pergunta do usuário.\n\n--- TEXTO DO DOCUMENTO ---\n${document.extractedText}\n--------------------------\n\n--- PERGUNTA DO USUÁRIO ---\n${prompt}\n---------------------------`;
+
+    const result = await model.generateContent(fullPrompt);
+    const response = result.response;
+    const llmAnswer = response.text();
+
+    await this.prisma.document.update({
+      where: { id: documentId },
+      data: {
+        llmInteractions: {
+          push: { prompt, answer: llmAnswer, timestamp: new Date() },
+        },
       },
-    },
-  });
+    });
 
-  return { answer: llmAnswer };
-}
+    return { answer: llmAnswer };
+  }
 }
