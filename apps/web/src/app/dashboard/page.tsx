@@ -1,7 +1,7 @@
 // apps/web/src/app/dashboard/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
@@ -10,6 +10,7 @@ import { LogOut, User as UserIcon, FileText } from 'lucide-react';
 import styles from './Dashboard.module.css';
 import UploadForm from './components/UploadForm';
 import ResultsCard from './components/ResultsCards';
+import DocumentList from './components/DocumentList';
 
 type DocumentData = {
   id: string;
@@ -24,10 +25,32 @@ export default function DashboardPage() {
   
   const [activeDocument, setActiveDocument] = useState<DocumentData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [documents, setDocuments] = useState<DocumentData[]>([]);
+
+  const fetchDocumentList = async () => {
+    if (!session) return;
+    try {
+      const accessToken = (session as any).accessToken;
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/documents`,
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      setDocuments(res.data);
+    } catch (error) {
+      toast.error('Não foi possível carregar a lista de documentos.');
+      console.error("Erro ao buscar lista de documentos:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetchDocumentList();
+    }
+  }, [status, session]);
 
   const handleUpload = async (file: File) => {
     setIsProcessing(true);
-    const loadingToast = toast.loading('Enviando arquivo...');
+    const toastId = toast.loading('Enviando arquivo...');
     const formData = new FormData();
     formData.append('file', file);
 
@@ -38,12 +61,10 @@ export default function DashboardPage() {
         formData,
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      toast.dismiss(loadingToast);
-      toast.success('Upload concluído! Processando documento...');
-      fetchDocument(res.data.documentId); // Inicia a busca pelos dados
+      toast.success('Upload concluído! Processando OCR...', { id: toastId });
+      fetchDocument(res.data.documentId); 
     } catch (error) {
-      toast.dismiss(loadingToast);
-      toast.error('Falha no upload.');
+      toast.error('Falha no upload.', { id: toastId });
       setIsProcessing(false);
     }
   };
@@ -51,7 +72,7 @@ export default function DashboardPage() {
   const fetchDocument = async (docId: string) => {
     if (!session) return;
     setIsProcessing(true);
-    setActiveDocument({ id: docId, status: 'PROCESSING', fileName: 'Carregando...', extractedText: 'Aguarde, processando...', llmInteractions: [] });
+    setActiveDocument({ id: docId, status: 'PROCESSING', fileName: 'Carregando...', extractedText: 'Aguarde...', llmInteractions: [] });
 
     try {
       const accessToken = (session as any).accessToken;
@@ -61,6 +82,7 @@ export default function DashboardPage() {
         setTimeout(() => fetchDocument(docId), 3000);
       } else {
         setIsProcessing(false);
+        fetchDocumentList(); 
       }
     } catch (error) {
       toast.error('Não foi possível carregar os detalhes do documento.');
@@ -68,6 +90,13 @@ export default function DashboardPage() {
       setIsProcessing(false);
     }
   };
+
+  const handleQuerySuccess = () => {
+    if (activeDocument) {
+      fetchDocument(activeDocument.id); 
+      fetchDocumentList(); 
+    }
+  }
 
   if (status === 'loading') {
     return <div className={styles.loadingScreen}>Carregando...</div>;
@@ -100,11 +129,17 @@ export default function DashboardPage() {
           <p className={styles.welcomeSubtitle}>Transforme seus documentos em dados inteligentes com IA</p>
         </div>
         <div className={styles.dashboardGrid}>
-          <UploadForm onUpload={handleUpload} isProcessing={isProcessing} />
-          <ResultsCard 
-            document={activeDocument} 
-            refreshDocument={() => activeDocument && fetchDocument(activeDocument.id)} 
-          />
+          <div className={styles.leftColumn}>
+            {}
+            <UploadForm onUpload={handleUpload} isProcessing={isProcessing} />
+            <DocumentList documents={documents} onDocumentSelect={fetchDocument} />
+          </div>
+          <div className={styles.rightColumn}>
+            <ResultsCard 
+              document={activeDocument} 
+              refreshDocument={handleQuerySuccess} 
+            />
+          </div>
         </div>
       </main>
     </div>

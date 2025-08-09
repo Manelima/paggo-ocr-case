@@ -6,6 +6,7 @@ import { createWorker } from 'tesseract.js';
 import pdf from 'pdf-parse';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import PDFDocument from 'pdfkit';
 
 @Injectable()
 export class DocumentsService {
@@ -131,4 +132,95 @@ export class DocumentsService {
 
     return { answer: llmAnswer };
   }
+
+    // ======================================================
+    // == MÉTODO PARA BUSCAR TODOS OS DOCUMENTOS DO USUÁRIO ==
+    // ======================================================
+    async getAllDocumentsForUser(user: User) {
+    this.logger.log(`Buscando todos os documentos para o usuário ${user.email}`);
+    return this.prisma.document.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' }, 
+    });
+  }
+
+async getDocumentForDownload(documentId: string, user: User) {
+  const document = await this.prisma.document.findUnique({
+    where: { id: documentId },
+  });
+
+  if (!document) throw new NotFoundException('Documento não encontrado.');
+  if (document.userId !== user.id) throw new ForbiddenException('Acesso negado.');
+
+  let content = `RELATÓRIO DO DOCUMENTO: ${document.fileName}\n`;
+  content += `========================================\n\n`;
+  content += `STATUS: ${document.status}\n`;
+  content += `DATA DE CRIAÇÃO: ${new Date(document.createdAt).toLocaleString()}\n\n`;
+  content += `--- TEXTO EXTRAÍDO (OCR) ---\n`;
+  content += `${document.extractedText || 'Nenhum texto extraído.'}\n\n`;
+  content += `--- INTERAÇÕES COM IA ---\n`;
+
+  const interactions = document.llmInteractions as any[];
+  if (interactions.length > 0) {
+    interactions.forEach(interaction => {
+      content += `\n[PERGUNTA]: ${interaction.prompt}\n`;
+      content += `[RESPOSTA]: ${interaction.answer}\n`;
+    });
+  } else {
+    content += `Nenhuma interação registrada.`;
+  }
+
+  return content;
+}
+
+// ======================================================
+// == MÉTODO PARA GERAR RELATÓRIO PDF ==
+// ======================================================
+async generatePdfReport(document: any): Promise<Buffer> {
+    this.logger.log(`Gerando relatório PDF com pdfkit para o documento ${document.id}`);
+    const interactions = document.llmInteractions as any[];
+
+    // O pdfkit trabalha com Buffers, então criamos uma Promise para aguardar a finalização
+    return new Promise((resolve) => {
+        const doc = new PDFDocument({ margin: 50 });
+        const buffers: any[] = [];
+
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfData = Buffer.concat(buffers);
+            resolve(pdfData);
+        });
+
+        // Construindo o conteúdo do PDF
+        doc.fontSize(20).font('Helvetica-Bold').text(`Relatório do Documento: ${document.fileName}`, { align: 'center' });
+        doc.moveDown();
+
+        doc.fontSize(12).font('Helvetica').text(`Status: ${document.status}`);
+        doc.text(`Data de Criação: ${new Date(document.createdAt).toLocaleString('pt-BR')}`);
+        doc.moveDown(2);
+
+        doc.fontSize(16).font('Helvetica-Bold').text('Texto Extraído (OCR)');
+        doc.rect(doc.x, doc.y, 510, 1).fill('#ccc').moveDown(0.5);
+        doc.fontSize(10).font('Courier').text(document.extractedText || 'Nenhum texto extraído.', { align: 'justify' });
+        doc.moveDown(2);
+
+        doc.fontSize(16).font('Helvetica-Bold').text('Interações com IA');
+        doc.rect(doc.x, doc.y, 510, 1).fill('#ccc').moveDown(0.5);
+
+        if (interactions && interactions.length > 0) {
+            interactions.forEach((interaction) => {
+                doc.fontSize(11).font('Helvetica-Bold').fillColor('#004499').text(`\nSua Pergunta:`);
+                doc.fontSize(11).font('Helvetica').fillColor('#333').text(interaction.prompt);
+                doc.fontSize(11).font('Helvetica-Bold').fillColor('#10b981').text(`\nResposta da IA:`);
+                doc.fontSize(11).font('Helvetica').fillColor('#333').text(interaction.answer);
+                doc.moveDown();
+            });
+        } else {
+            doc.fontSize(11).font('Helvetica').text('Nenhuma interação registrada.');
+        }
+
+        // Finaliza o documento
+        doc.end();
+    });
+}
 }

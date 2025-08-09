@@ -1,0 +1,15 @@
+/* apps/web/src/app/dashboard/components/DocumentList.module.css */
+.card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #e5e7eb; }
+.cardHeader { padding: 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; }
+.cardTitle { font-size: 1.25rem; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 0.5rem; }
+.list { list-style: none; padding: 0; margin: 0; }
+.listItem { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background-color 0.2s; }
+.listItem:last-child { border-bottom: none; }
+.listItem:hover { background-color: #f9fafb; }
+.fileIcon { color: #6b7280; flex-shrink: 0; }
+.fileName { flex-grow: 1; font-weight: 500; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 9999px; text-transform: uppercase; }
+.completed { background-color: #def7ec; color: #065f46; }
+.processing { background-color: #dbeafe; color: #1e40af; }
+.failed { background-color: #fee2e2; color: #991b1b; }
+.emptyText { padding: 1.5rem; text-align: center; color: #6b7280; }

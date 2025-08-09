@@ -6,8 +6,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import styles from './ResultsCard.module.css'; 
 import { Bot, User as UserIcon, Send, LoaderCircle } from 'lucide-react';
+import { Download, FileText, FileJson } from 'lucide-react'; 
 
-// Tipos para nossos dados
 type LlmInteraction = { 
   prompt: string; 
   answer: string; 
@@ -20,7 +20,6 @@ type DocumentData = {
   llmInteractions: LlmInteraction[];
 };
 
-// O componente agora aceita 'document' como nulo
 export default function ResultsCard({ document, refreshDocument }: { document: DocumentData | null, refreshDocument: () => void }) {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('ocr');
@@ -28,7 +27,6 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
   const [isQuerying, setIsQuerying] = useState(false);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
 
-  // Efeito para rolar para a última mensagem quando as interações mudam
   useEffect(() => {
     if (chatMessagesRef.current) {
       chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
@@ -52,7 +50,7 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
       setPrompt('');
       toast.dismiss(loadingToast);
       toast.success('Resposta recebida!');
-      refreshDocument(); // Avisa o pai para buscar os dados atualizados
+      refreshDocument(); 
     } catch (error) {
       toast.dismiss(loadingToast);
       toast.error('Falha ao comunicar com a IA.');
@@ -62,7 +60,6 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
     }
   };
 
-  // Se não houver documento ativo, mostra o placeholder
   if (!document) {
     return (
       <div className={styles.card}>
@@ -76,12 +73,51 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
     );
   }
 
-  // Se houver um documento, renderize a interface completa
+
+
+const handleDownload = async (format: 'txt' | 'pdf') => {
+    if (!document || !session) return;
+    const toastId = toast.loading(`Preparando seu .${format}...`);
+    try {
+        const accessToken = (session as any).accessToken;
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/download?format=${format}`,
+            { 
+                headers: { Authorization: `Bearer ${accessToken}` },
+                responseType: 'blob',
+            }
+        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = window.document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `relatorio-${document.fileName}.${format}`);
+        window.document.body.appendChild(link);
+        link.click();
+        window.document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        toast.success("Download iniciado!", { id: toastId });
+    } catch (error) {
+        toast.error("Falha ao baixar o relatório.", { id: toastId });
+    }
+};
+
   return (
     <div className={styles.card}>
-      <div className={styles.cardHeader}>
-        <h2 className={styles.cardTitle}>{document.fileName}</h2>
-      </div>
+   <div className={styles.cardHeader}>
+    <h2 className={styles.cardTitle}>{document.fileName}</h2>
+    
+    {/* Grupo de botões de download */}
+    <div className={styles.downloadButtonGroup}>
+        <button onClick={() => handleDownload('txt')} className={styles.downloadButton} disabled={document.status !== 'COMPLETED'}>
+            <FileText size={16} />
+            <span>.txt</span>
+        </button>
+        <button onClick={() => handleDownload('pdf')} className={styles.downloadButton} disabled={document.status !== 'COMPLETED'}>
+            <FileJson size={16} />
+            <span>.pdf</span>
+        </button>
+    </div>
+</div>
       <div className={styles.cardContent}>
         <div className={styles.resultTabs}>
           <button 

@@ -13,9 +13,34 @@
 ## 📋 Índice
 
 * [Sobre o Projeto](#-sobre-o-projeto)
+* [✨ Demonstração](#-demonstração)  
 * [Tecnologias Utilizadas](#-tecnologias-utilizadas)
 * [Como Rodar o Projeto Localmente](#-como-rodar-o-projeto-localmente)
 * [Decisões de Arquitetura](#-decisões-de-arquitetura)
+
+---
+
+## ✨ Demonstração
+
+A aplicação possui um fluxo completo, desde uma landing page de apresentação até um dashboard funcional e interativo.
+
+### Dashboard Principal
+*A tela principal da aplicação, onde o usuário faz o upload de documentos, visualiza o histórico e interage com os resultados.*
+![Dashboard da Aplicação](.github/assets/dashboard.png)
+
+<details>
+<summary>Clique para ver mais telas (Homepage e Autenticação)</summary>
+
+### Homepage
+*Landing page com a apresentação do projeto, tecnologias e arquitetura.*
+![Homepage](.github/assets/MainPage.png)
+
+### Telas de Autenticação
+*Fluxo de registro e login com feedback visual para o usuário.*
+![Tela de Registro](.github/assets/register.png)
+![Tela de Login](.github/assets/login.png)
+
+</details>
 
 ---
 

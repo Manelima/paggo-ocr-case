@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import ResultsCard from '../../dashboard/components/ResultsCards';
-
+import styles from './DocumentDetail.module.css'; // Crie este arquivo CSS
 
 
 type LlmInteraction = {
@@ -102,6 +102,15 @@ export default function DocumentDetailPage({ params }: { params: Promise<{ id: s
         </button>
         <h1 className="text-3xl font-bold mt-2">{document.fileName}</h1>
         <p className="text-sm text-slate-500">Status: {document.status}</p>
+
+        <a 
+  href={`${process.env.NEXT_PUBLIC_API_URL}/documents/${id}/download`} 
+  target="_blank"
+  rel="noopener noreferrer"
+  className={styles.downloadButton} 
+>
+  Baixar Relatório
+</a>
       </header>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
