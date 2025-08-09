@@ -2,8 +2,7 @@
 // apps/web/src/components/landing/Header.tsx
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
-import { FileText, Menu, X, Github } from 'lucide-react';
+import { FileText, X, Github } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge'; 
 import styles from './header.module.css';
 

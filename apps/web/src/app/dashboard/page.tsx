@@ -12,91 +12,87 @@ import UploadForm from './components/UploadForm';
 import ResultsCard from './components/ResultsCards';
 import DocumentList from './components/DocumentList';
 
+type LlmInteraction = {
+  prompt: string;
+  answer: string;
+  timestamp: string;
+};
+
 type DocumentData = {
   id: string;
   fileName: string;
   status: string;
   extractedText: string | null;
-  llmInteractions: any[];
+  llmInteractions: LlmInteraction[];
 };
 
 export default function DashboardPage() {
   const { data: session, status } = useSession({ required: true });
-  
+
   const [activeDocument, setActiveDocument] = useState<DocumentData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [documents, setDocuments] = useState<DocumentData[]>([]);
 
-  const fetchDocumentList = async () => {
-    if (!session) return;
+  const fetchDocumentList = useCallback(async () => {
+    if (!session?.accessToken) return;
     try {
-      const accessToken = (session as any).accessToken;
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/documents`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        { headers: { Authorization: `Bearer ${session.accessToken}` } }
       );
       setDocuments(res.data);
-    } catch (error) {
+    } catch {
       toast.error('Não foi possível carregar a lista de documentos.');
-      console.error("Erro ao buscar lista de documentos:", error);
     }
-  };
+  }, [session]);
+
+  const fetchDocument = useCallback(async (docId: string) => {
+    if (!session?.accessToken) return;
+    setIsProcessing(true);
+    setActiveDocument({ id: docId, status: 'PROCESSING', fileName: 'Carregando...', extractedText: 'Aguarde...', llmInteractions: [] });
+
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${docId}`, { headers: { Authorization: `Bearer ${session.accessToken}` } });
+      setActiveDocument(res.data);
+      if (res.data.status.includes('PROCESSING')) {
+        setTimeout(() => fetchDocument(docId), 3000);
+      } else {
+        setIsProcessing(false);
+        fetchDocumentList();
+      }
+    } catch {
+      toast.error('Não foi possível carregar os detalhes do documento.');
+      setActiveDocument(null);
+      setIsProcessing(false);
+    }
+  }, [session, fetchDocumentList]);
 
   useEffect(() => {
     if (status === 'authenticated') {
       fetchDocumentList();
     }
-  }, [status, session]);
+  }, [status, session, fetchDocumentList]);
 
   const handleUpload = async (file: File) => {
+    if (!session?.accessToken) return;
     setIsProcessing(true);
     const toastId = toast.loading('Enviando arquivo...');
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const accessToken = (session as any)?.accessToken;
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/documents/upload`,
         formData,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
+        { headers: { Authorization: `Bearer ${session.accessToken}` } }
       );
       toast.success('Upload concluído! Processando OCR...', { id: toastId });
-      fetchDocument(res.data.documentId); 
-    } catch (error) {
+      fetchDocument(res.data.documentId);
+    } catch {
       toast.error('Falha no upload.', { id: toastId });
       setIsProcessing(false);
     }
   };
-
-  const fetchDocument = async (docId: string) => {
-    if (!session) return;
-    setIsProcessing(true);
-    setActiveDocument({ id: docId, status: 'PROCESSING', fileName: 'Carregando...', extractedText: 'Aguarde...', llmInteractions: [] });
-
-    try {
-      const accessToken = (session as any).accessToken;
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${docId}`, { headers: { Authorization: `Bearer ${accessToken}` } });
-      setActiveDocument(res.data);
-      if (res.data.status.includes('PROCESSING')) {
-        setTimeout(() => fetchDocument(docId), 3000);
-      } else {
-        setIsProcessing(false);
-        fetchDocumentList(); 
-      }
-    } catch (error) {
-      toast.error('Não foi possível carregar os detalhes do documento.');
-      setActiveDocument(null);
-      setIsProcessing(false);
-    }
-  };
-
-  const handleQuerySuccess = () => {
-    if (activeDocument) {
-      fetchDocument(activeDocument.id); 
-      fetchDocumentList(); 
-    }
-  }
 
   if (status === 'loading') {
     return <div className={styles.loadingScreen}>Carregando...</div>;
@@ -112,14 +108,8 @@ export default function DashboardPage() {
             <span className={styles.logoText}>Paggo OCR</span>
           </div>
           <div className={styles.userMenu}>
-            <div className={styles.userInfo}>
-              <UserIcon size={16} />
-              <span>{session?.user?.email}</span>
-            </div>
-            <button className={styles.logoutBtn} onClick={() => signOut({ callbackUrl: '/' })}>
-              <LogOut size={16} />
-              <span>Sair</span>
-            </button>
+            <div className={styles.userInfo}><UserIcon size={16} /><span>{session?.user?.email}</span></div>
+            <button className={styles.logoutBtn} onClick={() => signOut({ callbackUrl: '/' })}><LogOut size={16} /><span>Sair</span></button>
           </div>
         </div>
       </header>
@@ -130,15 +120,16 @@ export default function DashboardPage() {
         </div>
         <div className={styles.dashboardGrid}>
           <div className={styles.leftColumn}>
-            {}
             <UploadForm onUpload={handleUpload} isProcessing={isProcessing} />
             <DocumentList documents={documents} onDocumentSelect={fetchDocument} />
           </div>
           <div className={styles.rightColumn}>
-            <ResultsCard 
-              document={activeDocument} 
-              refreshDocument={handleQuerySuccess} 
-            />
+           <ResultsCard 
+  document={activeDocument} 
+  refreshDocument={() => {
+    if (activeDocument) fetchDocument(activeDocument.id);
+  }}
+/>
           </div>
         </div>
       </main>

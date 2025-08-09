@@ -12,7 +12,6 @@ type ButtonProps = {
   onClick?: () => void;
   href?: string;
   className?: string;
-  [key: string]: any;
 };
 
 export const Button: React.FC<ButtonProps> = ({ 

@@ -4,6 +4,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+// 1. Importe o tipo de erro específico do Prisma
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,7 @@ export class AuthService {
   async register(dto: AuthDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
+    // 2. Adicione o bloco try...catch para a criação do usuário
     try {
       const user = await this.prisma.user.create({
         data: {
@@ -26,10 +29,13 @@ export class AuthService {
       const { password, ...result } = user;
       return result;
     } catch (error) {
-        if (error.code === 'P2002') {
-        throw new ForbiddenException('Um usuário com essas credenciais já existe.');
-    }
-    throw error;
+      if (
+        error instanceof PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ForbiddenException('Um usuário com este e-mail já existe.');
+      }
+      throw error;
     }
   }
 

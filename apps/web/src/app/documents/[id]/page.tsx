@@ -6,8 +6,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import ResultsCard from '../../dashboard/components/ResultsCards';
-import styles from './DocumentDetail.module.css'; // Crie este arquivo CSS
+import styles from './DocumentDetail.module.css'; 
 
 
 type LlmInteraction = {
@@ -39,7 +38,7 @@ export default function DocumentDetailPage({ params }: { params: Promise<{ id: s
     if (!session) return;
     
     try {
-      const accessToken = (session as any).accessToken;
+      const accessToken = session?.accessToken;
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/documents/${id}`,
         { headers: { Authorization: `Bearer ${accessToken}` } },
@@ -71,7 +70,7 @@ export default function DocumentDetailPage({ params }: { params: Promise<{ id: s
     const loadingToast = toast.loading('Perguntando à IA...');
 
     try {
-      const accessToken = (session as any).accessToken;
+      const accessToken = session?.accessToken;
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/documents/${id}/query`,
         { prompt },

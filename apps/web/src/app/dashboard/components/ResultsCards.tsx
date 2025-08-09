@@ -41,7 +41,7 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
     const loadingToast = toast.loading('Perguntando à IA...');
 
     try {
-      const accessToken = (session as any).accessToken;
+const accessToken = session?.accessToken;
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/query`,
         { prompt },
@@ -76,29 +76,29 @@ export default function ResultsCard({ document, refreshDocument }: { document: D
 
 
 const handleDownload = async (format: 'txt' | 'pdf') => {
-    if (!document || !session) return;
-    const toastId = toast.loading(`Preparando seu .${format}...`);
-    try {
-        const accessToken = (session as any).accessToken;
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/download?format=${format}`,
-            { 
-                headers: { Authorization: `Bearer ${accessToken}` },
-                responseType: 'blob',
-            }
-        );
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = window.document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `relatorio-${document.fileName}.${format}`);
-        window.document.body.appendChild(link);
-        link.click();
-        window.document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        toast.success("Download iniciado!", { id: toastId });
-    } catch (error) {
-        toast.error("Falha ao baixar o relatório.", { id: toastId });
-    }
+  if (!document || !session) return;
+  const toastId = toast.loading(`Preparando seu .${format}...`);
+  try {
+    const accessToken = session.accessToken;
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/documents/${document.id}/download?format=${format}`,
+      { 
+        headers: { Authorization: `Bearer ${accessToken}` },
+        responseType: 'blob',
+      }
+    );
+    const url = window.URL.createObjectURL(response.data);
+    const link = window.document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `relatorio-${document.fileName}.${format}`);
+    window.document.body.appendChild(link);
+    link.click();
+    window.document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    toast.success("Download iniciado!", { id: toastId });
+  } catch {
+    toast.error("Falha ao baixar o relatório.", { id: toastId });
+  }
 };
 
   return (

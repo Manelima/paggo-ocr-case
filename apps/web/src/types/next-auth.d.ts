@@ -1,22 +1,25 @@
 // apps/web/src/types/next-auth.d.ts
-import NextAuth, { DefaultSession, DefaultUser } from "next-auth";
-import { JWT, DefaultJWT } from "next-auth/jwt";
+import 'next-auth';
+import 'next-auth/jwt';
 
-declare module "next-auth" {
+declare module 'next-auth' {
+
   interface Session {
     accessToken?: string;
     user?: {
       id?: string;
-    } & DefaultSession["user"];
+    } & DefaultSession['user'];
   }
 
-  interface User extends DefaultUser {
+
+  interface User {
     accessToken?: string;
   }
 }
 
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
+declare module 'next-auth/jwt' {
+
+  interface JWT {
     id?: string;
     accessToken?: string;
   }

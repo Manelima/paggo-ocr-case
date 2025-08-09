@@ -1,12 +1,12 @@
 // apps/web/src/app/register/page.tsx
 'use client';
+import axios from 'axios'; 
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import styles from './Register.module.css'; // Importa nosso novo CSS!
+import styles from './Register.module.css'; 
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -16,8 +16,8 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true); // Inicia o estado de loading
-    const loadingToast = toast.loading('Criando sua conta...');
+    setIsLoading(true); 
+    const loadingToastId = toast.loading('Criando sua conta...');
 
     try {
       await axios.post(
@@ -25,28 +25,27 @@ export default function RegisterPage() {
         { email, password }
       );
 
-      toast.dismiss(loadingToast);
-      toast.success('Conta criada com sucesso! Redirecionando...');
+      toast.success('Conta criada com sucesso! Redirecionando...', { id: loadingToastId });
 
       setTimeout(() => {
         router.push('/login');
       }, 2000);
 
-    } catch (error: any) {
-      toast.dismiss(loadingToast);
-      const errorMessage = 
-        error.response?.data?.message || 
-        'Falha ao criar conta. Tente novamente.';
-      toast.error(errorMessage);
+    } catch (error) {
+      let errorMessage = 'Falha ao criar conta. Tente novamente.';
+      if (axios.isAxiosError(error) && error.response) {
+        errorMessage = (error.response.data as { message: string }).message || errorMessage;
+      }
+      toast.error(errorMessage, { id: loadingToastId });
       console.error(error);
     } finally {
-      setIsLoading(false); // Finaliza o estado de loading
+      setIsLoading(false); 
     }
   };
 
   return (
     <div className={styles.pageWrapper}>
-      <Toaster />
+      <Toaster position="top-center" />
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.header}>
@@ -78,7 +77,7 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 className={styles.input}
-                placeholder="Mínimo 6 caracteres"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
