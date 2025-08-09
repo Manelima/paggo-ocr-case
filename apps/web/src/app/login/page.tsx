@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
-import styles from './Login.module.css'; // Importa nosso novo CSS!
+import styles from './Login.module.css'; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

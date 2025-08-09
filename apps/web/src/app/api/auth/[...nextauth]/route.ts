@@ -3,9 +3,9 @@ import NextAuth from 'next-auth';
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-import { User } from 'next-auth'; 
+import { User } from 'next-auth';
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -32,16 +32,16 @@ export const authOptions: AuthOptions = {
                 'base64',
               ).toString(),
             );
-
+            
             return {
               id: payload.sub,
               email: payload.email,
               accessToken: backendResponse.access_token,
-            } as User; 
+            };
           }
           return null;
-        } catch (error: any) {
-          console.error('Authorize error:', error.response?.data);
+        } catch (error) {
+          console.error('Authorize error:', error);
           return null;
         }
       },
@@ -51,15 +51,14 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.email = user.email;
-        token.accessToken = (user as any).accessToken;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        (session.user as any).id = token.id;
-        (session as any).accessToken = token.accessToken;
+      if (token && session.user) {
+        session.user.id = token.id;
+        session.accessToken = token.accessToken;
       }
       return session;
     },

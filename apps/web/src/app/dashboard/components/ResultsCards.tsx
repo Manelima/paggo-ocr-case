@@ -6,7 +6,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import styles from './ResultsCard.module.css'; 
 import { Bot, User as UserIcon, Send, LoaderCircle } from 'lucide-react';
-import { Download, FileText, FileJson } from 'lucide-react'; 
+import { FileText, FileJson } from 'lucide-react'; 
 
 type LlmInteraction = { 
   prompt: string; 
