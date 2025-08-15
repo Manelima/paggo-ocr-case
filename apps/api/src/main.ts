@@ -6,13 +6,13 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const whitelist = [
-    'http://localhost:3000',
-    process.env.FRONTEND_URL,
-  ];
-
   app.enableCors({
     origin: function (origin, callback) {
+      const whitelist = [
+        'http://localhost:3000',
+        process.env.FRONTEND_URL,
+      ];
+
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
@@ -20,6 +20,7 @@ async function bootstrap() {
         callback(new Error('Not allowed by CORS'));
       }
     },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
