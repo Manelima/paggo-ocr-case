@@ -6,20 +6,16 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: function (origin, callback) {
-      const whitelist = [
-        'http://localhost:3000',
-        process.env.FRONTEND_URL,
-      ];
+  const frontendUrl = process.env.FRONTEND_URL;
 
-      if (!origin || whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        Logger.error(`Origem não permitida pelo CORS: ${origin}`, 'CORS');
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+  if (frontendUrl) {
+    Logger.log(`Configurando CORS para a origem: ${frontendUrl}`, 'Bootstrap');
+  } else {
+    Logger.warn(`Variável de ambiente FRONTEND_URL não definida!`, 'Bootstrap');
+  }
+
+  app.enableCors({
+    origin: frontendUrl, 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -28,6 +24,6 @@ async function bootstrap() {
 
   const port = process.env.API_PORT || 3001;
   await app.listen(port);
-  Logger.log(`Application is running on: http://localhost:${port}`, 'Bootstrap');
+  Logger.log(`Aplicação rodando em: http://localhost:${port}`, 'Bootstrap');
 }
 bootstrap();
