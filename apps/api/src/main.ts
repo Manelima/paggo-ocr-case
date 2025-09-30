@@ -5,6 +5,8 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  app.setGlobalPrefix('v1');
 
   const frontendUrl = process.env.FRONTEND_URL;
 
