@@ -95,7 +95,7 @@ export const Footer: React.FC = () => {
         
         <div className={styles.divider}>
           <p className={styles.copyright}>
-            &copy; 2024 Paggo OCR Case - Desenvolvido para o Desafio Técnico Paggo Group
+            &copy; 2025 Paggo OCR Case - Desenvolvido para o Desafio Técnico Paggo Group
           </p>
         </div>
       </div>

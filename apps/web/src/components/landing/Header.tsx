@@ -25,7 +25,7 @@ export const Header: React.FC = () => {
             </div>
             <span className={styles.logoText}>Paggo OCR</span>
             <Badge variant="success">
-              ✨ Concluído!
+               Concluído!
             </Badge>
           </div>
           

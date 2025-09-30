@@ -82,37 +82,50 @@ Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
     ```
 
 2.  **Configure as Variáveis de Ambiente:**
-    * Na raiz do projeto, crie um arquivo `.env` a partir do exemplo:
-        ```bash
-        cp .env.example .env
-        ```
-    * Abra o arquivo .env e preencha todas as variáveis necessárias (URL do banco, segredos de JWT, chave da API do Google Gemini, etc.).
+    * Este projeto precisa de dois arquivos de ambiente separados. Use o `.env.example` na raiz como guia.
+
+    * **Para o Backend (API):** Crie o arquivo `apps/api/.env` e adicione as variáveis necessárias, como `DATABASE_URL`, `JWT_SECRET`, e `GOOGLE_API_KEY`.
+    * **Para o Frontend (Web):** Crie o arquivo `apps/web/.env.local` e adicione as variáveis `NEXT_PUBLIC_API_URL`, `NEXTAUTH_URL`, e `NEXTAUTH_SECRET`.
 
 3.  **Instale as dependências:**
     ```bash
     pnpm install
     ```
 
-4.  **Suba o banco de dados (se usar Docker):**
+4.  **Suba o banco de dados (usando Docker):**
     ```bash
     docker-compose up -d
     ```
+    *Este comando irá iniciar um contêiner PostgreSQL em segundo plano.*
 
 5.  **Aplique as migrações do banco de dados:**
     ```bash
-    pnpm --filter api prisma migrate dev
+    pnpm --filter api exec prisma migrate dev
     ```
-    *O filtro `--filter api` garante que o comando rode apenas no projeto do backend.*
+    *O comando `exec` garante a execução correta do Prisma CLI no ambiente do monorepo.*
 
 6.  **Inicie a aplicação:**
     ```bash
     pnpm dev
     ```
-    *Este comando irá iniciar tanto o frontend quanto o backend em modo de desenvolvimento.*
+    *Este comando irá iniciar tanto o frontend (`http://localhost:3000`) quanto o backend (`http://localhost:3001`) em modo de desenvolvimento.*
 
 7.  Acesse `http://localhost:3000` em seu navegador.
 
 ---
+### Comandos Úteis de Desenvolvimento
+
+* **Visualizar o Banco de Dados (Prisma Studio):**
+    Para abrir uma interface gráfica no navegador e interagir com seu banco de dados local, execute:
+    ```bash
+    pnpm --filter api exec prisma studio
+    ```
+
+* **Gerar o Prisma Client manualmente:**
+    Após qualquer alteração no arquivo `schema.prisma`, o Prisma Client geralmente é atualizado automaticamente. Se precisar forçar a atualização:
+    ```bash
+    pnpm --filter api exec prisma generate
+    ```
 
 ## 🧠 Decisões de Arquitetura (Opcional, mas impressiona!)
 

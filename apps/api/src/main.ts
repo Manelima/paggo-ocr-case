@@ -6,6 +6,21 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const frontendUrl = process.env.FRONTEND_URL;
+
+  if (frontendUrl) {
+    Logger.log(`Configurando CORS para a origem: ${frontendUrl}`, 'Bootstrap');
+  } else {
+    Logger.warn(`Variável de ambiente FRONTEND_URL não definida!`, 'Bootstrap');
+  }
+
+  app.enableCors({
+    origin: frontendUrl, 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const port = process.env.API_PORT || 3001;

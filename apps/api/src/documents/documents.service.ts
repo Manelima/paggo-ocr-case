@@ -180,7 +180,6 @@ async generatePdfReport(document: any): Promise<Buffer> {
     this.logger.log(`Gerando relatório PDF com pdfkit para o documento ${document.id}`);
     const interactions = document.llmInteractions as any[];
 
-    // O pdfkit trabalha com Buffers, então criamos uma Promise para aguardar a finalização
     return new Promise((resolve) => {
         const doc = new PDFDocument({ margin: 50 });
         const buffers: any[] = [];
@@ -191,7 +190,6 @@ async generatePdfReport(document: any): Promise<Buffer> {
             resolve(pdfData);
         });
 
-        // Construindo o conteúdo do PDF
         doc.fontSize(20).font('Helvetica-Bold').text(`Relatório do Documento: ${document.fileName}`, { align: 'center' });
         doc.moveDown();
 
@@ -219,7 +217,6 @@ async generatePdfReport(document: any): Promise<Buffer> {
             doc.fontSize(11).font('Helvetica').text('Nenhuma interação registrada.');
         }
 
-        // Finaliza o documento
         doc.end();
     });
 }
