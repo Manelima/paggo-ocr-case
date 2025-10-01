@@ -16,7 +16,7 @@ const authOptions: AuthOptions = {
       async authorize(credentials): Promise<User | null> {
         try {
           const res = await axios.post(
-            `${process.env.NEXTAUTH_URL}/api/v1/auth/login`,
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials?.email,
               password: credentials?.password,
